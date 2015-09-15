@@ -15,6 +15,33 @@ RUN cpanm Cwd Scalar::Util autodie String::Util
 RUN cpanm -f PerlIO::Util
 RUN cpanm File::ShareDir::Install File::chdir YAML IO::Interactive PerlIO::via::gzip Test::Output Test::YAML Test::Base Algorithm::Diff Text::Diff Spiffy Capture::Tiny
 RUN cpanm -f Treex::Core
+RUN cpanm --installdeps Treex::Unilang
+RUN cpanm -f Treex::Unilang
+RUN cpanm Treex::EN
+
+ENV GIT_SSL_NO_VERIFY=true
+RUN apt-get -y install git
+RUN mkdir -p ~/tectomt && cd ~/tectomt && git clone https://github.com/ufal/treex.git
+
+RUN cpanm Lingua::Interset
+RUN cpanm Text::Iconv
+RUN cpanm Ufal::NameTag
+
+RUN mkdir -p ${HOME}/tectomt/.treex/share/data/models/morce/en/
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/
+RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.alph
+RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.dct
+RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ft
+RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ftrs
+RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/tags_for_form-from_wsj.dat
+
+ENV SVN_TRUNK=https://svn.ms.mff.cuni.cz/svn/tectomt_devel/trunk
+# password is "public"
+RUN apt-get -y install subversion
+RUN mkdir -p ~/scratch
+RUN svn --username public --password public export $SVN_TRUNK/libs/packaged ~/scratch/packaged
+RUN cd ~/scratch/packaged/Morce-English && perl Build.PL && ./Build &&  ./Build install --prefix=${HOME}/tectomt/perl5
+
 ENV TMT_ROOT=${HOME}/tectomt/
 ENV PATH="${TMT_ROOT}/treex/bin:$PATH"
 ENV PERL5LIB="${TMT_ROOT}/treex/lib:${TMT_ROOT}/libs/other:$PERL5LIB"

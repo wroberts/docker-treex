@@ -28,12 +28,16 @@ RUN cpanm Text::Iconv
 RUN cpanm Ufal::NameTag
 
 RUN mkdir -p ${HOME}/tectomt/.treex/share/data/models/morce/en/
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/
-RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.alph
-RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.dct
-RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ft
-RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ftrs
-RUN wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/tags_for_form-from_wsj.dat
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+    wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.alph
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+    wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.dct
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+    wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ft
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+    wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ftrs
+RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+    wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/tags_for_form-from_wsj.dat
 
 ENV SVN_TRUNK=https://svn.ms.mff.cuni.cz/svn/tectomt_devel/trunk
 # password is "public"

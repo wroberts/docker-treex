@@ -79,8 +79,7 @@ RUN bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentenc
 # docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::TagLinguaEn Write::CoNLLX"
 # docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::TagTreeTagger W2A::EN::Lemmatize Write::CoNLLX"
 # docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::EN::TagFeaturama W2A::EN::Lemmatize Write::CoNLLX"
-
-# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::TagMorce Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::EN::TagMorce W2A::EN::Lemmatize Write::CoNLLX"
 
 # socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
 # ifconfig vboxnet0

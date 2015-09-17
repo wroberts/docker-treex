@@ -27,16 +27,16 @@ RUN cpanm Lingua::Interset
 RUN cpanm Text::Iconv
 RUN cpanm Ufal::NameTag
 
-RUN mkdir -p ${HOME}/tectomt/.treex/share/data/models/morce/en/
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+RUN mkdir -p /root/tectomt/share/data/models/morce/en/
+RUN cd /root/tectomt/share/data/models/morce/en/ && \
     wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.alph
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+RUN cd /root/tectomt/share/data/models/morce/en/ && \
     wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.dct
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+RUN cd /root/tectomt/share/data/models/morce/en/ && \
     wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ft
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+RUN cd /root/tectomt/share/data/models/morce/en/ && \
     wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/morce.ftrs
-RUN cd ${HOME}/tectomt/.treex/share/data/models/morce/en/ && \
+RUN cd /root/tectomt/share/data/models/morce/en/ && \
     wget http://ufallab.ms.mff.cuni.cz/tectomt/share/data/models/morce/en/tags_for_form-from_wsj.dat
 
 ENV SVN_TRUNK=https://svn.ms.mff.cuni.cz/svn/tectomt_devel/trunk
@@ -44,9 +44,10 @@ ENV SVN_TRUNK=https://svn.ms.mff.cuni.cz/svn/tectomt_devel/trunk
 RUN apt-get -y install subversion
 RUN mkdir -p ~/scratch
 RUN svn --username public --password public export $SVN_TRUNK/libs/packaged ~/scratch/packaged
-RUN cd ~/scratch/packaged/Morce-English && perl Build.PL && ./Build &&  ./Build install --prefix=${HOME}/tectomt/perl5
+RUN cd ~/scratch/packaged/Morce-English && perl Build.PL && ./Build &&  ./Build install
+ENV PERL5LIB="$PERL5LIB:/usr/local/lib/x86_64-linux-gnu/perl/5.20.2"
 
-ENV TMT_ROOT=${HOME}/tectomt/
+ENV TMT_ROOT=/root/tectomt
 ENV PATH="${TMT_ROOT}/treex/bin:$PATH"
 ENV PERL5LIB="${TMT_ROOT}/treex/lib:${TMT_ROOT}/libs/other:$PERL5LIB"
 ENV PERLLIB=$PERL5LIB
@@ -55,9 +56,35 @@ RUN mkdir -p $TMT_ROOT/share/
 RUN ln -s /opt/tred $TMT_ROOT/share/
 RUN ln -s /tmp $TMT_ROOT/tmp
 RUN echo "tred_dir: $TMT_ROOT/share/tred" >> ~/.treex/config.yaml
+
+# fix treex missing modules
+RUN cpanm App::whichpm
+RUN cpanm URI::Find::Schemeless
+# install tree-tagger model for english
+RUN bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::TagTreeTagger W2A::EN::Lemmatize Write::CoNLLX"
+# install featurama
+RUN apt-get install -y swig
+RUN apt-get install -y file
+RUN apt-get install -y autoconf automake libtool
+RUN FILE=`mktemp`; wget http://www.ms.mff.cuni.cz/~kraut6am/featurama/featurama-1.0.tar.gz -qO $FILE && cd `dirname $FILE` && tar -zxf $FILE && cd featurama-1.0 && autoreconf --install && ./configure --enable-perl && make && make install
+ENV PERL5LIB="$PERL5LIB:/usr/local/lib/perl5/x86_64-linux-gnu-thread-multi"
+RUN bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::EN::TagFeaturama W2A::EN::Lemmatize Write::CoNLLX"
+
+# docker run wroberts/treex bash -c "echo 'Hello, world' | treex Read::Text language=en Write::Text language=en"
+# docker run wroberts/treex bash -c "echo 'Hello! Mr. Brown, how are you?' | treex -Len Read::Text W2A::Segment Write::Sentences"
+# docker run wroberts/treex bash -c "echo 'Hello! Mr. Brown, how are you?' | treex -Len Read::Text W2A::EN::Segment Write::Sentences"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::TokenizeOnWhitespace Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::Tokenize Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::TagLinguaEn Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::TagTreeTagger W2A::EN::Lemmatize Write::CoNLLX"
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::EN::TagFeaturama W2A::EN::Lemmatize Write::CoNLLX"
+
+# docker run wroberts/treex bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::TagMorce Write::CoNLLX"
+
 # socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
 # ifconfig vboxnet0
-# docker run --rm -e DISPLAY=192.168.99.1:0 -i -t -v /Users/wroberts/Documents/Berlin/qtleap/docker/tred/sshfs:/clou docker-tred ttred
+# docker run --rm -e DISPLAY=192.168.99.1:0 -i -t -v /Users/wroberts/Documents/Berlin/qtleap/docker/tred/sshfs:/clou wroberts/treex ttred
 #
 # http://www.larkinweb.co.uk/computing/mounting_file_systems_over_two_ssh_hops.html
 #

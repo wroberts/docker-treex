@@ -1,0 +1,24 @@
+#+STARTUP: content hidestars odd
+
+* Notes
+
+  Treex notes
+  - [[http://ufal.mff.cuni.cz/treex/firststeps.html][Treex::Tutorial::FirstSteps]]
+  - [[http://search.cpan.org/~tkr/Treex-Doc-0.08324/lib/Treex/Tutorial/Install.pod][Treex::Tutorial::Install - search.cpan.org]]
+  - [[https://ufal.mff.cuni.cz/tectomt/example.html][TectoMT - Translation from English to Czech]]
+
+  EuroParl
+  - [[http://www.statmt.org/europarl/][Europarl Parallel Corpus]]
+
+  Docker notes
+  - [[https://docs.docker.com/articles/dockerfile_best-practices/][Best practices for writing Dockerfiles]]
+
+  Perl notes
+  - [[http://perl-tutorial.org/][Perl Tutorial Hub]]
+  - [[http://learn.perl.org/docs/][Documentation - learn.perl.org]]
+  - [[http://learnperl.scratchcomputing.com/tutorials/modules/][Learn Perl - How to Use Perl Modules]]
+
+  Git subtree
+
+  - [[https://makingsoftware.wordpress.com/2013/02/16/using-git-subtrees-for-repository-separation/][Using Git subtrees for repository separation – Making Software]]
+  - [[http://stackoverflow.com/questions/920165/howto-extract-a-git-subdirectory-and-make-a-submodule-out-of-it][Howto extract a git subdirectory and make a submodule out of it? - Stack Overflow]]

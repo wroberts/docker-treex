@@ -69,6 +69,13 @@ RUN apt-get install -y autoconf automake libtool
 RUN FILE=`mktemp`; wget http://www.ms.mff.cuni.cz/~kraut6am/featurama/featurama-1.0.tar.gz -qO $FILE && cd `dirname $FILE` && tar -zxf $FILE && cd featurama-1.0 && autoreconf --install && ./configure --enable-perl && make && make install
 ENV PERL5LIB="$PERL5LIB:/usr/local/lib/perl5/x86_64-linux-gnu-thread-multi"
 RUN bash -c "echo \"Mr. Brown, we'll start tagging.\" | treex -Len Read::Sentences W2A::EN::Tokenize W2A::EN::TagFeaturama W2A::EN::Lemmatize Write::CoNLLX"
+RUN cd ~/tectomt/treex && git pull
+RUN cpanm --notest URI::Find::Schemeless Text::Iconv AI::MaxEntropy Cache::Memcached Email::Find XML::Twig String::Util String::Diff List::Pairwise MooseX::Role::AttributeOverride YAML::Tiny Graph Tree::Trie Text::Brew App::whichpm
+RUN cd ~/scratch && svn --username public --password public co https://svn.ms.mff.cuni.cz/svn/tectomt_devel/trunk/install/tool_installation && cd tool_installation/NADA && perl Makefile.PL && make && make install
+RUN apt-get update
+RUN apt-get install -y default-jre
+RUN bash -c "echo 'Hello, world' | treex -Len Util::SetGlobal if_missing_bundles=ignore Read::Text Scen::Analysis::EN Write::CoNLLX"
+RUN cpanm Cache::LRU
 
 # docker run wroberts/treex bash -c "echo 'Hello, world' | treex Read::Text language=en Write::Text language=en"
 # docker run wroberts/treex bash -c "echo 'Hello! Mr. Brown, how are you?' | treex -Len Read::Text W2A::Segment Write::Sentences"

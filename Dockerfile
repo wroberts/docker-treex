@@ -76,6 +76,7 @@ RUN apt-get update
 RUN apt-get install -y default-jre
 RUN bash -c "echo 'Hello, world' | treex -Len Util::SetGlobal if_missing_bundles=ignore Read::Text Scen::Analysis::EN Write::CoNLLX"
 RUN cpanm Cache::LRU
+RUN wget -O /root/.tredrc https://gist.githubusercontent.com/wroberts/183dbd91272e101db966/raw/db5faf7af4255fff3ba5eb5983f7352b58ebcafc/sample-tredrc
 
 # docker run wroberts/treex bash -c "echo 'Hello, world' | treex Read::Text language=en Write::Text language=en"
 # docker run wroberts/treex bash -c "echo 'Hello! Mr. Brown, how are you?' | treex -Len Read::Text W2A::Segment Write::Sentences"
